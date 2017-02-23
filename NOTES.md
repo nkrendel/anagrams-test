@@ -40,8 +40,7 @@
 
     1. Delete all words in the corpus (either via the DELETE /words api or via a redis client).
     2. Edit ```application.properties``` and set ```corpus.initialize``` to ```true```.
-    3. Rebuild the app.  The corpus currently gets initialized in the Spring Test phase of the build.
-    4. Run the app.  The corpus will now contain all the words in the dictionary file with their anagrams.
+    3. Rebuild and re-run the app.  You will see a message in the log: "INITIALIZING CORPUS".  It will take a while...
     
 - Design overview and trade-offs you considered
 
