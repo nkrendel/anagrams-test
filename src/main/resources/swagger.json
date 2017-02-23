@@ -1,0 +1,393 @@
+{
+  "swagger":"2.0",
+  "info":{
+    "description":"This is the API for the Anagrams Excercise.",
+    "version":"1.0",
+    "title":"Anagram Test API",
+    "termsOfService":"https://www.google.com/policies/terms/",
+    "contact":{
+      "name":"Noam Krendel"
+    },
+    "license":{
+      "name":"Apache License Version 2.0",
+      "url":"https://github.com/springfox/springfox/blob/master/LICENSE"
+    }
+  },
+  "host":"anagrams-test.herokuapp.com:80",
+  "basePath":"/",
+  "tags":[
+    {
+      "name":"Words",
+      "description":"Operations with Words"
+    },
+    {
+      "name":"Anagrams",
+      "description":"Anagram Operations"
+    },
+    {
+      "name":"Stats",
+      "description":"Statistical Information on Words and Anagrams"
+    }
+  ],
+  "paths":{
+    "/words":{
+      "get":{
+        "tags":[
+          "Words"
+        ],
+        "summary":"Get All Words in the Corpus",
+        "description":"This call will return a list of all the words currently in the data store",
+        "operationId":"getAllWords",
+        "consumes":[
+          "application/json"
+        ],
+        "produces":[
+          "application/json",
+          "*/*"
+        ],
+        "parameters":[
+        ],
+        "responses":{
+          "200":{
+            "description":"OK",
+            "schema":{
+              "$ref":"#/definitions/WordList"
+            }
+          }
+        }
+      },
+      "post":{
+        "tags":[
+          "Words"
+        ],
+        "summary":"Add Words to the Corpus",
+        "description":"This call lets a user add words to the data store.",
+        "operationId":"addWordsToCorpus",
+        "consumes":[
+          "application/json"
+        ],
+        "produces":[
+          "application/json",
+          "*/*"
+        ],
+        "parameters":[
+          {
+            "in": "body",
+            "name": "words",
+            "description": "List of words",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Words"
+            }
+          }
+        ],
+        "responses":{
+          "201":{
+            "description":"Words added"
+          }
+        }
+      },
+      "delete":{
+        "tags":[
+          "Words"
+        ],
+        "summary":"Delete all Words in the Corpus",
+        "description":"This call lets a user deete all the words in the data store.",
+        "operationId":"deleteAllWords",
+        "consumes":[
+          "application/json"
+        ],
+        "produces":[
+          "application/json",
+          "*/*"
+        ],
+        "parameters":[
+        ],
+        "responses":{
+          "204":{
+            "description":"All Words Deleted"
+          }
+        }
+      }
+    },
+    "/words/{word}":{
+      "delete":{
+        "tags":[
+          "Words"
+        ],
+        "summary":"Delete a Word from the Corpus",
+        "description":"This call lets a user delete a specific word from the data store, optionally with its anagrams",
+        "operationId":"deleteWord",
+        "consumes":[
+          "application/json"
+        ],
+        "produces":[
+          "application/json",
+          "*/*"
+        ],
+        "parameters":[
+          {
+            "name":"word",
+            "in":"path",
+            "description":"The word to be deleted",
+            "required":true,
+            "type":"string"
+          },
+          {
+            "name":"deleteAnagrams",
+            "in":"query",
+            "description":"Indicate whether all anagrams of the word should also be deleted",
+            "required":false,
+            "type":"boolean"
+          }
+        ],
+        "responses":{
+          "200":{
+            "description":"OK"
+          }
+        }
+      }
+    },
+    "/anagrams":{
+      "get":{
+        "tags":[
+          "Anagrams"
+        ],
+        "summary":"Get All Anagrams of Group Size <= x",
+        "description":"Given a minimum group size, return all words and anagrams of at least this size",
+        "operationId":"getAnagramGroups",
+        "consumes":[
+          "application/json"
+        ],
+        "produces":[
+          "application/json",
+          "*/*"
+        ],
+        "parameters":[
+          {
+            "name":"minGroupSize",
+            "in":"query",
+            "description":"Minimum anagram group size",
+            "required":true,
+            "type":"integer",
+            "format":"int32"
+          }
+        ],
+        "responses":{
+          "200":{
+            "description":"OK",
+            "schema":{
+              "$ref":"#/definitions/WordList"
+            }
+          }
+        }
+      },
+      "post":{
+        "tags":[
+          "Anagrams"
+        ],
+        "summary":"Check if given Words are Anagrams",
+        "description":"This method takes a list of words and returns an indicator whether they are all anagrams.",
+        "operationId":"areWordsAnagrams",
+        "consumes":[
+          "application/json"
+        ],
+        "produces":[
+          "application/json",
+          "*/*"
+        ],
+        "parameters":[
+          {
+            "name":"words",
+            "in":"body",
+            "description":"List of words to check",
+            "required":true,
+            "schema":{
+              "$ref":"#/definitions/Words"
+            }
+          }
+        ],
+        "responses":{
+          "400":{
+            "description":"This code can indicate one of the following problems: 'Required field {status} not present or 'Only account {status} updates are allowed."
+          },
+          "200":{
+            "description":"OK"
+          }
+        }
+      }
+    },
+    "/anagrams/{word}":{
+      "get":{
+        "tags":[
+          "Anagrams"
+        ],
+        "summary":"Get Anagrams for Word",
+        "description":"Return a list of anagrams for an input word (if any)",
+        "operationId":"getAnagramsForWord",
+        "consumes":[
+          "application/json"
+        ],
+        "produces":[
+          "application/json",
+          "*/*"
+        ],
+        "parameters":[
+          {
+            "name":"word",
+            "in":"path",
+            "description":"Input word",
+            "required":true,
+            "type":"string"
+          },
+          {
+            "name":"limit",
+            "in":"query",
+            "description":"Limit on how many anagrams to return",
+            "required":false,
+            "type":"integer",
+            "format":"int32"
+          },
+          {
+            "name":"includeProper",
+            "in":"query",
+            "description":"Should the result include anagrams which are Proper Nouns? (default true)",
+            "required":false,
+            "type":"boolean"
+          }
+        ],
+        "responses":{
+          "200":{
+            "description":"OK",
+            "schema":{
+              "$ref":"#/definitions/Anagrams"
+            }
+          }
+        }
+      }
+    },
+    "/stats/words":{
+      "get":{
+        "tags":[
+          "Stats"
+        ],
+        "summary":"Get Word Statistics",
+        "description":"Return count of words, and min/max/avg/median word length",
+        "operationId":"getWordInfo",
+        "consumes":[
+          "application/json"
+        ],
+        "produces":[
+          "application/json",
+          "*/*"
+        ],
+        "parameters":[
+        ],
+        "responses":{
+          "200":{
+            "description":"OK",
+            "schema":{
+              "$ref":"#/definitions/WordSummary"
+            }
+          }
+        }
+      }
+    },
+    "/stats/anagrams":{
+      "get":{
+        "tags":[
+          "Stats"
+        ],
+        "summary":"Get a List of Words with the Most Anagrams",
+        "description":"Return list of words of the largest anagram group size.",
+        "operationId":"getAnagramInfo",
+        "consumes":[
+          "application/json"
+        ],
+        "produces":[
+          "application/json",
+          "*/*"
+        ],
+        "parameters":[
+        ],
+        "responses":{
+          "200":{
+            "description":"OK",
+            "schema":{
+              "$ref":"#/definitions/WordList"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions":{
+    "Anagrams":{
+      "properties":{
+        "anagrams":{
+          "type":"array",
+          "items":{
+            "type":"string"
+          }
+        }
+      }
+    },
+    "Word":{
+      "properties":{
+        "word":{
+          "type":"string"
+        },
+        "anagrams":{
+          "type":"array",
+          "items":{
+            "type":"string"
+          }
+        }
+      }
+    },
+    "Words":{
+      "properties":{
+        "words":{
+          "type":"array",
+          "items":{
+            "type":"string"
+          }
+        }
+      }
+    },
+    "WordList":{
+      "properties":{
+        "list":{
+          "type":"array",
+          "items":{
+            "$ref":"#/definitions/Word"
+          }
+        }
+      }
+    },
+    "WordSummary":{
+      "properties":{
+        "count":{
+          "type":"integer",
+          "format":"int32"
+        },
+        "minLength":{
+          "type":"integer",
+          "format":"int32"
+        },
+        "maxLength":{
+          "type":"integer",
+          "format":"int32"
+        },
+        "medLength":{
+          "type":"number",
+          "format":"float"
+        },
+        "avgLength":{
+          "type":"number",
+          "format":"float"
+        }
+      }
+    }
+  }
+}
