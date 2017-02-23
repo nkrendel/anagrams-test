@@ -1,7 +1,7 @@
 Dev Project
 =========
 
-For Developer Notes please see: [NOTES.md](Notes.md).
+For Developer Notes please see: [NOTES.md](NOTES.md).
 
 # The Project
 
