@@ -10,8 +10,6 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Component
 public class ContextRefreshedListener implements ApplicationListener<ContextRefreshedEvent>{
@@ -29,20 +27,14 @@ public class ContextRefreshedListener implements ApplicationListener<ContextRefr
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-
         if (initializeCorpus) {
-            executorService.execute(() -> {
-                try {
-                    wordService.initializeCorpus(); // initialize (load) corpus if not already initialized
-                } catch (IOException e) {
-                    LOG.error(e.getMessage());
-                }
-            });
+            try {
+                wordService.initializeCorpus(); // initialize (load) corpus if not already initialized
+            } catch (IOException e) {
+                LOG.error(e.getMessage());
+            }
         } else {
-            executorService.execute(wordService::loadCorpus);
+            wordService.loadCorpus();
         }
-
-        executorService.shutdown();
     }
 }
